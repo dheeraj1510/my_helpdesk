@@ -1,0 +1,12 @@
+ .card{
+    width: 80%;
+ }
+ .card *{
+    color: black;
+  }
+  .card-body a{
+    color: white;
+  }
+  .btn-primary{
+    background: rgb(0,123,255);
+  }

@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+  <head>
+      
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VMV6V9TT8L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VMV6V9TT8L');
+</script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="top.css">
+    <link rel="stylesheet" href="main.css">
+    <title>Codes</title>
+        <link rel="icon" type="image/x-icon" href="Pics/channels4_profile.ico">
+  </head>
+  <body>
+            <!-- Laoding Start -->
+            <div class="loading" id="load">
+                <div id="circle">
+                    <div id="dot"></div>
+                  </div>
+                </div>
+                <!-- Laoding End -->
+    <div class="nav">
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="freeZone.html">Free Zone</a></li>
+        </ul>
+    </div>
+    <div class="container-fluid" style="padding-top: 30px;">
+        <div class="row">
+
+            <div class="col-md-12" style="padding-left: 100px;">
+                <h1 align="center">Google Apps Script, Excel and more</h1>
+            </div>
+
+
+        </div>
+        <hr style="background: white;">
+        <hr style="background: white;">
+              <div class="row" style="width: 100%;">
+                <div class="col-md-8">
+                  <h3 align="center">onEdit Function for Google Sheet</h3>
+<pre>
+var sheetName = "Sheet1"
+function onEdit(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  var rng = e.range;
+  var row = rng.getRow();
+  var col = rng.getColumn();
+  var timeStamp = ss.getRange(row,col-1).getValue();
+  var rowHeader = ss.getRange(3,col).getValue();
+
+  if(!rng.isBlank() && timeStamp == "" && rowHeader == "COMPLETED" && row > 3){
+
+    ss.getRange(row, col-1).setValue(new Date());
+    
+  }
+
+}
+</pre>
+                </div>
+                <div class="col-md-8" style="overflow: hidden;">
+                  <h3 align="center">Result</h3>
+                  <img src="Pics/Google Sheet.gif" alt="" style="border: 1px solid white; padding: 0; width: 100%;">
+                  </div>
+</div>
+<br>
+<div class="col-md-8" style="border:2px solid white;">
+    </div>
+<br>
+              <div class="row" style="width: 100%;">
+                <div class="col-md-8">
+<h3 align="center">Excel Code : Editing for specific time period</h3>
+<pre>
+    <h3 style="text-indent: 30px;">this code for Workbook_Open</h3>
+    Private Sub Workbook_Open()
+    Call testTime
+    End Sub
+</pre>
+<pre>
+    <h3 style="text-indent: 30px;">this code for Module</h3>
+Sub macro_timer()
+
+'Tells Excel when to next run the macro.
+Application.OnTime Now + TimeValue("00:00:01"), "testTime"
+
+End Sub
+Sub testTime()
+
+Dim datntime As String
+Dim timee() As String
+
+datntime = Now
+
+timee = Split(datntime, " ")
+
+If timee(1) > "10:00:00" And timee(1) < "11:00:00" Then
+Application.ActiveWorkbook.Activate
+
+Else
+
+MsgBox ("you can edit this sheet only from 10 am to 11 am.")
+Application.ActiveWorkbook.Save
+Application.Quit
+
+End If
+Call macro_timer
+End Sub
+</pre>
+</div>
+</div>
+<br>
+<div class="col-md-8" style="border:2px solid white;">
+    </div>
+<br>
+              <div class="row" style="width: 100%;">
+                <div class="col-md-8">
+<h3 align="center">Excel Code : Lock cell after edit.</h3>
+
+<pre>
+Note: First select all cells then click right and select "Format cells" option then
+go to protaction Tab then uncheck locked option and press ok button and after that past
+below code in the sheet code window.
+
+Private Sub Worksheet_Change(ByVal Target As Range)
+
+ActiveSheet.Unprotect Password = "ok"
+
+Target.Cells.Locked = True
+
+ActiveSheet.Protect Password = "ok"
+
+End Sub
+</pre>
+</div>
+</div>
+<div class="col-md-8" style="border:2px solid white;">
+    </div>
+<br>
+              <div class="row" style="width: 100%;">
+                <div class="col-md-8">
+<h3 align="center">Code for Download html table in Excel</h3>
+
+<pre>
+&lt;script&gt;
+  var table = '&lt;table&gt;&lt;tr&gt;&lt;td&gt;Second&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;';
+  var uri = 'data:application/vnd.ms-excel,' + encodeURIComponent(table);
+
+  var filename = "Report_" + new Date().toISOString().slice(0,10) + ".xls";
+
+  var a = document.createElement("a");
+  a.href = uri;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+&lt;/script&gt;
+</pre>
+
+</div>
+</div>
+<br>
+<div class="col-md-8" style="border:2px solid white;">
+    </div>
+    <br>
+              <div class="row" style="width: 100%;">
+                <div class="col-md-8">
+<h3 align="center">Open New Window using window.write()</h3>
+<pre>
+
+    <a href="Window Open Code.txt"><button style="border: none; outline:none; background: tomato; padding: 5px 10px; cursor: pointer; border-radius: 5px;">Show Code</button></a>
+
+</pre>
+</div>
+</div>
+<div class="col-md-8" style="border:2px solid white;">
+    </div>
+<br>
+
+            <div class="container" id="msg" style="margin-top: 150px;">
+            <div class="row footer">
+                <div class="col">
+                <div class="row">
+                <div class="col" style="text-align: center;">
+                    <div class="row"><div class="col">CONTACT US</div></div>
+                    <div class="row"><div class="col"><h1>Reach out for a new project or just say hello</h1></div></div>
+                </div>
+                </div><br><br><br>
+                <div class="row formandinfo">
+                    <div class="col-md-8">
+                        <form id="myForm">
+                            <h3>SEND US A MESSAGE</h3>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="inputbox">
+                                        <input type="text" id="name" required>
+                                        <span>Your Name</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="inputbox">
+                                        <input type="text" id="ids" required>
+                                        <span>Your Email</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="inputbox">
+                                        <input type="text" id="sub" required>
+                                        <span>Subject</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="inputbox">
+                                        <textarea name="" id="usermsg" required placeholder="Your Message"></textarea>
+                                    </div>
+                                </div>
+                            </div><br><br>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="inputbox">
+                              <button type="submit" class="btn" id="btn">Submit</button>
+                            </div>
+                        </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4 info">
+                        <div class="row">
+                            <div class="col"><span>CONTACT INFO</span></div>
+                        </div><br>
+                        <div class="row">
+                            <div class="col">
+                            <div class="row"><div class="col"><p>Email Us At</p></div></div>
+                            <div class="row"><div class="col"><span>dheerajsharma782@gmail.com</span></div></div>
+                        </div>
+                        </div><br>
+                        <div class="row">
+                            <div class="col">
+                            <div class="row"><div class="col"><p>Call Us At</p></div></div>
+                            <div class="row"><div class="col"><span>+91 9068259627</span></div></div>
+                        </div>
+                        </div><br>
+                        <div class="row">
+                            <div class="links"><a href="https://www.instagram.com/dheerajsharma131" target="blank"><i class="fa-brands fa-instagram"></i></a></div>
+                            <div class="links"><a href="https://codepen.io/dheeraj002" target="blank"><i class="fa-brands fa-codepen"></i></a></div>
+                            <div class="links"><a href="https://www.youtube.com/channel/UCgskQN2gSwzVjJ4k05vnc6Q" target="blank"><i class="fa-brands fa-square-youtube"></i></a></div>
+                            <div class="links"><a href="https://wa.me/9068259627?text=Hii%20Dheeraj" target="blank"><i class="fa-brands fa-whatsapp"></i></a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+</div>
+<div class="container-fluid footerbox">
+<div class="row">
+    <div class="col-md-6">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate ad numquam quos dignissimos non explicabo suscipit repellendus odio dolorem atque hic deleniti commodi deserunt consequatur autem, recusandae excepturi ullam possimus?</div>
+    <div class="col-md-6">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate ad numquam quos dignissimos non explicabo suscipit repellendus odio dolorem atque hic deleniti commodi deserunt consequatur autem, recusandae excepturi ullam possimus?</div>
+</div>
+</div>
+<button onclick="windowScroll()" id="top">top</button>
+    <script src="reveal.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script>
+        const input = document.querySelectorAll("input");
+        const textarea = document.querySelectorAll("textarea");
+        var url = "https://script.google.com/macros/s/AKfycbzR-SJxqt5IMQr6gvtFWm-OmkKUker_F0ZerCYfnEqWjxSku_3tAGaLbI3KOfIsgJgS/exec"
+        document.querySelector("#btn").addEventListener("click",function(e){
+        e.preventDefault();
+
+        document.querySelector("#load").style.display="block";
+
+        var obj = {
+            type:"userData",
+            nam : document.querySelector("#name").value,
+            ids : document.querySelector("#ids").value,
+            sub : document.querySelector("#sub").value,
+            cmsg : document.querySelector("#usermsg").value,
+        };
+
+        fetch(url,{
+            method: 'POST',
+            body: JSON.stringify(obj),
+        })
+        .then(function(){
+            alert("Thank you for joining us, we will contact you soon.");
+
+            for(i=0; i<input.length; i++){
+            input[i].value=""
+            }
+            for(j=0; j<textarea.length; j++){
+              textarea[j].value=""
+            }
+
+           // response.text();
+        })
+        .then((data) => {
+            console.log(data);
+            document.querySelector("#load").style.display="none";
+        });
+        });
+    </script>
+    <script>
+        document.querySelector("#load").style.display="none";
+    </script>
+  </body>
+</html>
+

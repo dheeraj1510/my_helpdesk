@@ -1,0 +1,120 @@
+function openHtmlInNewWindow() {
+    // 1. डेटा को मूल विंडो से तैयार करें
+    
+    // NodeList को एक Array में बदलें ताकि हम slice() का उपयोग कर सकें
+    const originalTableRows = Array.from(document.querySelectorAll("tr")); 
+    
+    let tableRowsHtml = "";
+    let csvData = "";
+    
+    // यह Array अब सभी Rows को स्टोर करेगा (Headers सहित, यदि मौजूद हों)
+    let dataRows = originalTableRows; 
+
+    // 1.1 Headers के लिए CSV डेटा तैयार करें
+    if (originalTableRows.length > 0 && originalTableRows[0].children.length >= 4) {
+        // Headers को CSV लाइन के रूप में लें, और कोट्स का ध्यान रखें
+        const headerRow = Array.from(originalTableRows[0].children)
+            .map(th => `"${th.innerText.trim().replace(/"/g, '""')}"`).join(',');
+        
+        csvData += headerRow + '\n';
+        
+        // डेटा Rows को 1 से शुरू करें (headers को छोड़कर)
+        dataRows = originalTableRows.slice(1); // <--- अब slice() काम करेगा!
+    }
+    
+    // 1.2 HTML (सभी Rows) और CSV (केवल डेटा Rows) दोनों तैयार करें
+    
+    // HTML के लिए, हम सभी Rows पर लूप करते हैं (headers सहित)
+    originalTableRows.forEach(function (trow) {
+        if (trow.children.length >= 4) {
+             // HTML Row तैयार करें
+             tableRowsHtml += `
+                <tr>
+                    <td>${trow.children[0].innerText}</td>
+                    <td>${trow.children[1].innerText}</td>
+                    <td>${trow.children[2].innerText}</td>
+                    <td>${trow.children[3].innerText}</td>
+                </tr>
+            `;
+        }
+    });
+
+    // CSV के लिए, हम dataRows (headers को छोड़कर) पर लूप करते हैं, यदि headers को पहले ही जोड़ा जा चुका है।
+    // Note: यदि कोई header नहीं था, तो dataRows = originalTableRows.
+    // यदि आपकी पहली रो header है, तो यह सुनिश्चित करने के लिए कि वह डुप्लीकेट न हो, हम dataRows पर लूप करेंगे।
+    dataRows.forEach(function (trow) {
+        if (trow.children.length >= 4) {
+            // CSV Row तैयार करें (डबल कोट्स में लपेटें और आंतरिक कोट्स को एस्केप करें)
+            const rowValues = Array.from(trow.children)
+                .map(td => `"${td.innerText.replace(/"/g, '""')}"`).join(',');
+            csvData += rowValues + '\n';
+        }
+    });
+
+
+    // 2. CSV से Blob और Download URL को मूल विंडो में जनरेट करें
+    
+    // UTF-8 BOM जोड़ें
+    const BOM = "\ufeff";
+    const blob = new Blob([BOM + csvData], { type: 'text/csv;charset=utf-8;' });
+    const downloadUrl = URL.createObjectURL(blob); 
+
+    // 3. एक नई विंडो खोलें
+    const newWindow = window.open("", "PrintWindow", "width=800,height=600");
+
+    // 4. HTML सामग्री तैयार करें
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Custom Content Window</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f0f0; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                .download-button { 
+                    background-color: #4CAF50; 
+                    color: white; 
+                    padding: 10px 20px; 
+                    border: none; 
+                    cursor: pointer; 
+                    border-radius: 5px; 
+                    font-size: 16px;
+                    text-decoration: none; 
+                    display: inline-block;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>कॉपीड टेबल डेटा</h1>
+            
+            <a href="${downloadUrl}" download="exported_data.csv" class="download-button">
+                Download as Excel (CSV)
+            </a>
+            
+            <table>
+                <tbody>
+                    ${tableRowsHtml} 
+                </tbody>
+            </table>
+
+            <script>
+                // URL को revoke करने के लिए, आपको window.opener की आवश्यकता होगी
+                // सुनिश्चित करें कि यह फ़ंक्शन तभी चलता है जब window.opener मौजूद हो
+                window.addEventListener('beforeunload', function() {
+                    if (window.opener && window.opener.URL && window.opener.URL.revokeObjectURL) {
+                        window.opener.URL.revokeObjectURL('${downloadUrl}');
+                    }
+                });
+            </script>
+        </body>
+        </html>
+    `;
+
+    // 5. नई विंडो के दस्तावेज़ में HTML लिखें और उसे बंद करें
+    newWindow.document.write(htmlContent);
+    newWindow.document.close();
+}
+
+// फ़ंक्शन को कॉल करें 
+openHtmlInNewWindow();
